@@ -1,0 +1,167 @@
+{
+    "integrantes": [
+        "Fiallos Yanza Jonathan Josue",
+        "Guevara Panimboza Steven Marlon"
+    ],
+    "distribucion": [
+        {
+            "digito": 0,
+            "ent": 987,
+            "pru": 196
+        },
+        {
+            "digito": 1,
+            "ent": 1124,
+            "pru": 227
+        },
+        {
+            "digito": 2,
+            "ent": 993,
+            "pru": 206
+        },
+        {
+            "digito": 3,
+            "ent": 1022,
+            "pru": 202
+        },
+        {
+            "digito": 4,
+            "ent": 974,
+            "pru": 196
+        },
+        {
+            "digito": 5,
+            "ent": 904,
+            "pru": 178
+        },
+        {
+            "digito": 6,
+            "ent": 986,
+            "pru": 192
+        },
+        {
+            "digito": 7,
+            "ent": 1044,
+            "pru": 206
+        },
+        {
+            "digito": 8,
+            "ent": 975,
+            "pru": 195
+        },
+        {
+            "digito": 9,
+            "ent": 991,
+            "pru": 202
+        }
+    ],
+    "resultados": [
+        {
+            "Modelo": "Árbol de decisión",
+            "Exactitud ent. (%)": 99.02,
+            "Error ent. (%)": 0.98,
+            "Exactitud prueba (%)": 81.8,
+            "Error prueba (%)": 18.2,
+            "Brecha (p. p.)": 17.22
+        },
+        {
+            "Modelo": "Random Forest",
+            "Exactitud ent. (%)": 99.93,
+            "Error ent. (%)": 0.07,
+            "Exactitud prueba (%)": 94.8,
+            "Error prueba (%)": 5.2,
+            "Brecha (p. p.)": 5.13
+        },
+        {
+            "Modelo": "k-NN",
+            "Exactitud ent. (%)": 96.51,
+            "Error ent. (%)": 3.49,
+            "Exactitud prueba (%)": 94.55,
+            "Error prueba (%)": 5.45,
+            "Brecha (p. p.)": 1.96
+        }
+    ],
+    "tiempos_ent": {
+        "Árbol de decisión": 1.593191146850586,
+        "Random Forest": 4.238802433013916,
+        "k-NN": 0.003840923309326172
+    },
+    "tiempos_pru": {
+        "Árbol de decisión": 0.012523889541625977,
+        "Random Forest": 0.38988304138183594,
+        "k-NN": 1.517493486404419
+    },
+    "confusiones_max": {
+        "Árbol de decisión": {
+            "max_casos": 14,
+            "parejas": [
+                [
+                    3,
+                    5
+                ]
+            ]
+        },
+        "Random Forest": {
+            "max_casos": 7,
+            "parejas": [
+                [
+                    7,
+                    9
+                ]
+            ]
+        },
+        "k-NN": {
+            "max_casos": 9,
+            "parejas": [
+                [
+                    2,
+                    7
+                ]
+            ]
+        }
+    },
+    "ejemplos_analizados": [
+        {
+            "indice": 8,
+            "real": 9,
+            "pred_dt": 7,
+            "pred_rf": 9,
+            "pred_knn": 7
+        },
+        {
+            "indice": 23,
+            "real": 2,
+            "pred_dt": 3,
+            "pred_rf": 2,
+            "pred_knn": 7
+        },
+        {
+            "indice": 99,
+            "real": 3,
+            "pred_dt": 7,
+            "pred_rf": 7,
+            "pred_knn": 7
+        },
+        {
+            "indice": 119,
+            "real": 4,
+            "pred_dt": 9,
+            "pred_rf": 9,
+            "pred_knn": 9
+        },
+        {
+            "indice": 154,
+            "real": 0,
+            "pred_dt": 1,
+            "pred_rf": 5,
+            "pred_knn": 5
+        },
+        {
+            "indice": 171,
+            "real": 7,
+            "pred_dt": 5,
+            "pred_rf": 7,
+            "pred_knn": 1
+        }
+    ]
+}

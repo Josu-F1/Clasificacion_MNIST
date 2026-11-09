@@ -1,0 +1,19 @@
+# LaTeX auxiliares
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos temporales de Word
+~$*
+
+# Directorio temporal de extracción de imágenes del docx
+images_extracted/
