@@ -98,3 +98,4 @@ jupyter notebook Taller_APE_MNIST_Arbol_RandomForest_kNN.ipynb
 pdflatex informe_mnist.tex
 pdflatex informe_mnist.tex
 ```
+

@@ -89,9 +89,9 @@
 
 \textbf{Específicos:}
 \begin{itemize}[leftmargin=*,noitemsep]
-    \item Preparar las imágenes de MNIST y reproducir los conjuntos de entrenamiento y prueba mediante muestreo estratificado representativo.
-    \item Ajustar y evaluar los tres clasificadores con exactamente los mismos datos y calcular su exactitud y error en cada conjunto.
-    \item Justificar la elección de un modelo a partir de las métricas de prueba, el análisis de la brecha de generalización y el estudio de sus matrices de confusión.
+    \item Preparar las imágenes de MNIST y reproducir los conjuntos de entrenamiento y prueba.
+    \item Ajustar y evaluar los tres clasificadores con los mismos datos y calcular su exactitud y error en cada conjunto.
+    \item Justificar la elección de un modelo a partir de las métricas de prueba y del análisis de sus errores.
 \end{itemize}
 
 \subsection*{2.2 Modalidad}
@@ -118,28 +118,64 @@ Registren el entorno y las versiones de Python y scikit-learn. Completen las tab
 \subsection*{2.6 Actividades por desarrollar}
 
 \paragraph{Actividad 1. Preparar MNIST.}
-Se utilizó la base de datos de referencia \texttt{mnist\_784}, versión 1 (OpenML, ID 554) \cite{openml_mnist}, construida por Yann LeCun, Corinna Cortes y Christopher Burges a partir de muestras de dígitos manuscritos de la oficina del censo estadounidense (NIST SD-3) y estudiantes de secundaria (NIST SD-1). Cada imagen consta de una resolución matricial de $28 \times 28$ píxeles en escala de grises, totalizando 784 variables por observación, con valores originales entre 0 (fondo negro) y 255 (trazo blanco), y una etiqueta entera entre 0 y 9. En la Figura~\ref{fig:ejemplos_mnist} se presentan cinco muestras del dataset junto con sus etiquetas verdaderas.
+Carguen \texttt{mnist\_784}, versión 1 (OpenML, ID 554) \cite{openml_mnist}. Cada imagen contiene $28 \times 28$ píxeles en escala de grises y tiene una etiqueta de 0 a 9. Visualicen cinco ejemplos con sus etiquetas.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.88\textwidth]{images/mnist_5_ejemplos.png}
-    \caption{Visualización de cinco muestras representativas del conjunto MNIST y sus etiquetas.}
-    \label{fig:ejemplos_mnist}
-\end{figure}
+Conserven la separación original: las primeras 60\,000 observaciones pertenecen a entrenamiento y las últimas 10\,000 a prueba. Para la práctica, tomen 10\,000 y 2\,000 observaciones, respectivamente, mediante muestreo estratificado por dígito con semilla 42. El Anexo A proporciona el código de partida.
 
-Para el desarrollo experimental se conservó rigurosamente la partición canónica del reservorio:
-\begin{itemize}[noitemsep]
-    \item Las primeras 60\,000 observaciones corresponden al conjunto de entrenamiento original.
-    \item Las últimas 10\,000 observaciones corresponden al conjunto de prueba original.
+Representen cada imagen como un vector de 784 intensidades entre 0 y 1, dividiendo por 255. Verifiquen las dimensiones de \texttt{X\_ent} y \texttt{X\_pru} y reporten cuántos ejemplos de cada dígito quedaron en ambos conjuntos.
+
+\paragraph{Actividad 2. Entrenar.}
+Instancien un objeto para cada modelo con la configuración de la Tabla~\ref{tab:configuracion}. Apliquen \texttt{fit(X\_ent, y\_ent)} a los tres, usando exactamente el mismo conjunto de entrenamiento.
+
+\begin{table}[H]
+\centering
+\caption{Configuración de los clasificadores}
+\label{tab:configuracion}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Modelo} & \textbf{Clase de scikit-learn} & \textbf{Hiperparámetros fijados} \\
+\midrule
+Árbol de decisión & \texttt{DecisionTreeClassifier} \cite{sklearn_dt} & \texttt{max\_depth=15, random\_state=42} \\
+\addlinespace
+Random Forest & \texttt{RandomForestClassifier} \cite{sklearn_rf} & \texttt{n\_estimators=100, max\_depth=15, random\_state=42} \\
+\addlinespace
+k-NN & \texttt{KNeighborsClassifier} \cite{sklearn_knn} & \texttt{n\_neighbors=5, metric="euclidean", weights="uniform"} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Usen los valores por defecto para los demás parámetros. Describan qué hace \texttt{fit} en cada modelo: el árbol aprende reglas de división, el bosque ajusta un conjunto de árboles y k-NN conserva ejemplos de referencia.
+
+\paragraph{Actividad 3. Evaluar.}
+Para cada modelo, apliquen \texttt{predict} a \texttt{X\_ent} y a \texttt{X\_pru} por separado. Comparen cada predicción con las etiquetas de su propio conjunto. No utilicen las etiquetas de prueba para ajustar ni seleccionar hiperparámetros.
+
+\[
+\text{Exactitud (\%)} = 100 \times \frac{\text{aciertos}}{\text{número de ejemplos}}
+\]
+\[
+\text{Error de clasificación (\%)} = 100 \times \frac{\text{fallos}}{\text{número de ejemplos}} = 100 - \text{exactitud (\%)}
+\]
+
+Pueden usar \texttt{accuracy\_score} para obtener la proporción de aciertos y multiplicarla por 100 \cite{sklearn_accuracy}. Calculen la brecha de exactitud como entrenamiento menos prueba, en puntos porcentuales. Redondeen únicamente al reportar.
+
+\paragraph{Actividad 4. Comparar.}
+Construyan una matriz de confusión de prueba por modelo con las clases 0 a 9 en ambos ejes (filas: etiqueta real; columnas: predicción). Usen las métricas y las matrices para sustentar la comparación de la sección 2.7.
+
+\vspace{0.4cm}
+
+\subsection*{2.7 Resultados obtenidos}
+
+\subsubsection*{2.7.1 Entorno computacional y librerías utilizadas}
+\begin{itemize}[leftmargin=*,noitemsep]
+    \item \textbf{Intérprete de Python:} Versión 3.12.4 (64-bit, MSC v.1940 AMD64).
+    \item \textbf{Librería scikit-learn:} Versión 1.9.1.
+    \item \textbf{Librerías de soporte:} NumPy 2.x, pandas 2.x, Matplotlib 3.x, SciPy.
+    \item \textbf{Sistema Operativo:} Microsoft Windows 11 Home Single Language (x64).
 \end{itemize}
 
-A partir de dichos bloques, se extrajeron subconjuntos representativos de $N_{\text{ent}} = 10\,000$ instancias para entrenamiento y $N_{\text{pru}} = 2\,000$ instancias para prueba aplicando un muestreo aleatorio estratificado según el dígito con semilla fija \texttt{random\_state=42}. Esto garantiza que la probabilidad a priori de cada clase $P(Y=k)$ permanezca balanceada e idéntica en ambos subconjuntos.
-
-Cada imagen se transformó en un vector unidimensional $x \in [0, 1]^{784}$ mediante normalización lineal:
-\[
-x_j = \frac{p_j}{255.0}, \quad \forall j \in \{1, 2, \dots, 784\}
-\]
-donde $p_j$ denota la intensidad entera del píxel $j$. Las dimensiones matriciales resultantes son:
+\subsubsection*{2.7.2 Preparación de MNIST y distribución por dígito (Actividad 1)}
+De acuerdo al código del Anexo A, se realizó la ingesta de \texttt{mnist\_784} (OpenML ID 554). Se verificaron las dimensiones resultantes de las matrices de características y vectores de etiquetas:
 \[
 X_{\text{ent}} \in \mathbb{R}^{10\,000 \times 784}, \quad y_{\text{ent}} \in \mathbb{Z}^{10\,000}
 \]
@@ -147,7 +183,16 @@ X_{\text{ent}} \in \mathbb{R}^{10\,000 \times 784}, \quad y_{\text{ent}} \in \ma
 X_{\text{pru}} \in \mathbb{R}^{2\,000 \times 784}, \quad y_{\text{pru}} \in \mathbb{Z}^{2\,000}
 \]
 
-En la Tabla~\ref{tab:distribucion} y en la Figura~\ref{fig:distribucion_digitos} se ilustra la distribución de frecuencias absolutas y relativas por clase para ambos conjuntos.
+En la Figura~\ref{fig:ejemplos_mnist} se visualizan cinco ejemplos iniciales con sus respectivas etiquetas verdaderas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{images/mnist_5_ejemplos.png}
+    \caption{Visualización de cinco muestras iniciales del conjunto MNIST y sus etiquetas.}
+    \label{fig:ejemplos_mnist}
+\end{figure}
+
+En la Tabla~\ref{tab:distribucion} y en la Figura~\ref{fig:distribucion_digitos} se reporta el número exacto de imágenes obtenidas por conjunto y su distribución porcentual por cada dígito ($0$ a $9$), evidenciando el balance estratificado estricto.
 
 \begin{table}[H]
 \centering
@@ -182,77 +227,30 @@ En la Tabla~\ref{tab:distribucion} y en la Figura~\ref{fig:distribucion_digitos}
     \label{fig:distribucion_digitos}
 \end{figure}
 
-\paragraph{Actividad 2. Entrenar.}
-Se instanció un objeto para cada modelo bajo la configuración parametrizada en la Tabla~\ref{tab:configuracion}. Cada clasificador fue ajustado mediante el método \texttt{fit(X\_ent, y\_ent)} sobre exactamente los mismos datos de entrenamiento.
-
-\begin{table}[H]
-\centering
-\caption{Configuración e hiperparámetros fijados para los clasificadores.}
-\label{tab:configuracion}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabularx}{\textwidth}{l l X}
-\toprule
-\textbf{Modelo} & \textbf{Clase de scikit-learn} & \textbf{Hiperparámetros fijados} \\
-\midrule
-Árbol de decisión & \texttt{DecisionTreeClassifier} \cite{sklearn_dt} & \texttt{max\_depth=15, random\_state=42} \\
-\addlinespace
-Random Forest & \texttt{RandomForestClassifier} \cite{sklearn_rf} & \texttt{n\_estimators=100, max\_depth=15, random\_state=42} \\
-\addlinespace
-k-NN & \texttt{KNeighborsClassifier} \cite{sklearn_knn} & \texttt{n\_neighbors=5, metric="euclidean", weights="uniform"} \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\textbf{Fundamentación Teórica del Método \texttt{fit} en Cada Modelo:}
+\subsubsection*{2.7.3 Entrenamiento y descripción del funcionamiento de \texttt{fit} (Actividad 2)}
+Los tres modelos fueron ajustados exactamente sobre $X_{\text{ent}}$ e $y_{\text{ent}}$. El comportamiento intrínseco de \texttt{fit} en cada clasificador es:
 \begin{itemize}[leftmargin=*]
-    \item \textbf{Árbol de Decisión (CART):} Durante la invocación de \texttt{fit}, el algoritmo induce de forma voraz y recursiva una jerarquía binaria de partición del espacio muestral $\mathbb{R}^{784}$. En cada nodo interno, selecciona el par $(j, \theta)$ compuesto por una característica de píxel $j$ y un umbral de corte $\theta \in [0, 1]$ que maximice la reducción de impureza de Gini:
+    \item \textbf{Árbol de Decisión:} Al llamar \texttt{fit}, el algoritmo construye recursivamente un árbol binario calculando en cada nodo la característica de píxel y el umbral escalar que maximicen la reducción de impureza de Gini:
     \[
-    \Delta I_G = I_G(D) - \left( \frac{|D_L|}{|D|} I_G(D_L) + \frac{|D_R|}{|D|} I_G(D_R) \right)
+    I_G(D) = 1 - \sum_{k=0}^{9} p_k^2
     \]
-    donde el índice de Gini se define como $I_G(D) = 1 - \sum_{k=0}^{9} p_k^2$, siendo $p_k$ la proporción de muestras de la clase $k$ en el nodo. El proceso se detiene forzosamente cuando un nodo alcanza una profundidad de 15 niveles (\texttt{max\_depth=15}).
+    El árbol crece hasta alcanzar la cota restrictiva fijada de 15 niveles de profundidad (\texttt{max\_depth=15}). Tiempo de ajuste: \textbf{4.94 segundos}.
     
-    \item \textbf{Random Forest (Ensamble por Bagging):} Al invocar \texttt{fit}, construye de forma paralela un bosque compuesto por 100 árboles de decisión individuales (\texttt{n\_estimators=100}). Cada árbol $t \in \{1, \dots, 100\}$ se entrena con una muestra generada mediante remuestreo con reemplazo (\textit{bootstrap aggregating}) de tamaño $N_{\text{ent}} = 10\,000$. En cada bifurcación, a diferencia de un árbol tradicional, el algoritmo no explora las 784 variables completas, sino que restringe la búsqueda a un subespacio aleatorio de tamaño $m = \lfloor \sqrt{784} \rfloor = 28$ características. Esto descorrelaciona la estructura de los árboles individuales y abate la varianza del ensamble:
+    \item \textbf{Random Forest:} Durante \texttt{fit}, genera un ensamble constituido por 100 árboles de decisión independientes (\texttt{n\_estimators=100}). Cada árbol individual se entrena con una muestra generada mediante remuestreo con reemplazo (\textit{bootstrap}) del conjunto de entrenamiento y, en cada bifurcación, evalúa únicamente un subconjunto aleatorio de variables ($m = \lfloor \sqrt{784} \rfloor = 28$ píxeles), mitigando drásticamente la correlación entre árboles y la varianza del ensamble:
     \[
     \text{Var}\left( \frac{1}{B}\sum_{b=1}^B T_b(x) \right) = \rho \sigma^2 + \frac{1 - \rho}{B}\sigma^2
     \]
-    reduciendo sustancialmente el término $\frac{1-\rho}{B}\sigma^2$ a medida que $B=100$ crece y disminuyendo la correlación inter-árbol $\rho$.
+    Tiempo de ajuste: \textbf{11.70 segundos}.
     
-    \item \textbf{k-NN (k-Nearest Neighbors):} Al pertenecer al paradigma de aprendizaje basado en instancias o aprendizaje perezoso (\textit{lazy learning}), el método \texttt{fit} no calcula coeficientes analíticos ni genera una función discriminante paramétrica explícita. Su función consiste únicamente en indexar y organizar los 10\,000 vectores de entrenamiento en estructuras jerárquicas espaciales (como KD-Trees o Ball-Trees) en la memoria principal para habilitar búsquedas de vecinos próximos eficientes durante la fase de predicción.
+    \item \textbf{k-NN (k-Nearest Neighbors):} Al ser un algoritmo de aprendizaje perezoso (\textit{lazy learning}), el método \texttt{fit} no calcula coeficientes paramétricos analíticos; únicamente indexa los 10\,000 vectores en estructuras jerárquicas espaciales (KD-Tree/Ball-Tree) en memoria para permitir consultas de distancia euclidiana durante la inferencia. Tiempo de ajuste: \textbf{0.01 segundos}.
 \end{itemize}
 
-\paragraph{Actividad 3. Evaluar.}
-Para cada clasificador se aplicó el método \texttt{predict} de forma independiente sobre los conjuntos $X_{\text{ent}}$ y $X_{\text{pru}}$, contrastando las predicciones contra las etiquetas reales para computar:
-\[
-\text{Exactitud (\%)} = 100 \times \frac{\sum_{i=1}^N \mathbb{I}(y_i = \hat{y}_i)}{N} = \texttt{accuracy\_score}(y, \hat{y}) \times 100
-\]
-\[
-\text{Error de clasificación (\%)} = 100 - \text{Exactitud (\%)}
-\]
-\[
-\text{Brecha (p. p.)} = \text{Exactitud}_{\text{ent}} - \text{Exactitud}_{\text{pru}}
-\]
-
-\paragraph{Actividad 4. Comparar.}
-Se construyeron matrices de confusión sobre el conjunto de prueba para las 10 clases ($C \in \mathbb{Z}^{10 \times 10}$):
-\[
-C_{ij} = \sum_{k=1}^{N_{\text{pru}}} \mathbb{I}(y_k = i \land \hat{y}_k = j)
-\]
-donde la fila $i$ representa la clase verdadera y la columna $j$ representa la predicción emitida. A partir de ello se identificaron con exactitud las peores confusiones interclase ($i \neq j$) y se analizaron las causas morfológicas de los fallos.
-
-\subsection*{2.7 Resultados obtenidos}
-
-\textbf{Registro del entorno computacional utilizado:}
-\begin{itemize}[leftmargin=*,noitemsep]
-    \item \textbf{Intérprete de Python:} Versión 3.12.4 (64-bit, MSC v.1940 AMD64).
-    \item \textbf{Librería scikit-learn:} Versión 1.9.1.
-    \item \textbf{Librerías de soporte:} NumPy 2.x, pandas 2.x, Matplotlib 3.x, SciPy.
-\end{itemize}
-
-En la Tabla~\ref{tab:resultados_ent_pru} se presentan los resultados cuantitativos consolidados de exactitud, error y brecha de generalización para los tres modelos.
+\subsubsection*{2.7.4 Resultados de evaluación en entrenamiento y prueba (Actividad 3)}
+Las predicciones se obtuvieron aplicando \texttt{predict} de forma independiente sobre entrenamiento y prueba. En la Tabla~\ref{tab:resultados_ent_pru} se presentan los resultados con dos decimales exactos.
 
 \begin{table}[H]
 \centering
-\caption{Resultados de evaluación en entrenamiento y prueba.}
+\caption{Resultados de evaluación en entrenamiento y prueba (Tabla 2 de la guía).}
 \label{tab:resultados_ent_pru}
 \renewcommand{\arraystretch}{1.25}
 \begin{tabularx}{\textwidth}{l >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X}
@@ -269,7 +267,7 @@ k-NN              & 96.51 & 3.49 & 94.55 & 5.45  & 1.96  \\
 \end{flushleft}
 \end{table}
 
-En la Figura~\ref{fig:comparativa_metricas} se aprecia visualmente la relación entre el rendimiento en entrenamiento y prueba junto con la brecha de sobreajuste. Asimismo, en la Figura~\ref{fig:comparativa_tiempos} se ilustra el análisis de tiempos computacionales de ajuste (\texttt{fit}) e inferencia (\texttt{predict}).
+En la Figura~\ref{fig:comparativa_metricas} se muestra la comparativa visual de exactitud y brecha de sobreajuste, mientras que en la Figura~\ref{fig:comparativa_tiempos} se ilustra el análisis computacional de tiempos de entrenamiento e inferencia en escala logarítmica.
 
 \begin{figure}[H]
     \centering
@@ -285,8 +283,8 @@ En la Figura~\ref{fig:comparativa_metricas} se aprecia visualmente la relación 
     \label{fig:comparativa_tiempos}
 \end{figure}
 
-\paragraph{Análisis de las Matrices de Confusión.}
-En la Figura~\ref{fig:matrices_confusion_comparativa} se presentan las matrices de confusión de prueba para los tres clasificadores evaluados. Adicionalmente, en la Figura~\ref{fig:matrices_individuales} se desglosan las matrices individuales con barras de escala cromática y valores enteros normalizados.
+\subsubsection*{2.7.5 Matrices de confusión y análisis de errores (Actividad 4)}
+En la Figura~\ref{fig:matrices_confusion_comparativa} se exhiben las tres matrices de confusión de prueba ($2\,000$ ejemplos) obtenidas para cada clasificador. En la Figura~\ref{fig:matrices_individuales} se presentan adicionalmente de forma individual con escala de color y valores enteros.
 
 \begin{figure}[H]
     \centering
@@ -318,21 +316,15 @@ En la Figura~\ref{fig:matrices_confusion_comparativa} se presentan las matrices 
     \label{fig:matrices_individuales}
 \end{figure}
 
-Al evaluar las celdas fuera de la diagonal principal ($i \neq j$), se determinaron las confusiones más frecuentes entre dígitos distintos para cada modelo:
+\paragraph{Confusiones más frecuentes entre dígitos distintos ($i \neq j$):}
 \begin{itemize}[leftmargin=*]
-    \item \textbf{Árbol de decisión:} La mayor confusión ocurrió entre el \textbf{dígito real 3 clasificado erróneamente como 5}, registrando un total de \textbf{14 casos} (seguido por 4 vs 9 con 11 casos y 7 vs 9 con 11 casos). Esto obedece a que el árbol simple divide el espacio con cortes ortogonales rígidos paralelos a los ejes de coordenadas de píxel individuales, siendo incapaz de modelar la continuidad curvilínea de los arcos inferiores compartidos por el 3 y el 5.
-    \item \textbf{Random Forest:} La confusión más frecuente se presentó con el \textbf{dígito real 7 clasificado erróneamente como 9}, sumando un total de \textbf{7 casos}. Dicha ambigüedad surge cuando el trazo superior horizontal de un 7 manuscrito posee una inclinación o densidad que cierra parcialmente la parte superior semejando el lazo cerrado característico del 9.
-    \item \textbf{k-NN:} La mayor confusión se observó en el \textbf{dígito real 2 clasificado erróneamente como 7}, alcanzando \textbf{9 casos}. Al fundamentarse estrictamente en la distancia euclidiana en un espacio de 784 dimensiones (afectado por la maldición de la dimensionalidad), trazos de 2 con base horizontal tenue o curva presentan un vector de distancias acumuladas muy próximo a los patrones canónicos del 7.
+    \item \textbf{Árbol de decisión:} La confusión más frecuente se suscitó entre el \textbf{dígito real 3 clasificado erróneamente como 5}, registrando un total de \textbf{14 casos} (seguido por 4 vs 9 con 11 casos y 7 vs 9 con 11 casos).
+    \item \textbf{Random Forest:} La confusión más frecuente ocurrió entre el \textbf{dígito real 7 clasificado erróneamente como 9}, registrando un total de \textbf{7 casos}.
+    \item \textbf{k-NN:} La confusión más frecuente se dio entre el \textbf{dígito real 2 clasificado erróneamente como 7}, alcanzando \textbf{9 casos}.
 \end{itemize}
 
-\paragraph{Análisis de Muestras de Prueba Mal Clasificadas.}
-En la Figura~\ref{fig:ejemplo_error} se expone la muestra de prueba correspondiente al índice 64, cuya etiqueta real es el dígito 2. En dicha instancia se aprecian las siguientes predicciones emitidas:
-\begin{itemize}[leftmargin=*,noitemsep]
-    \item \textbf{Etiqueta Real:} 2
-    \item \textbf{Predicción Árbol de Decisión:} 6
-    \item \textbf{Predicción Random Forest:} 4
-    \item \textbf{Predicción k-NN:} 2 (acierto correcto)
-\end{itemize}
+\paragraph{Muestra de prueba mal clasificada:}
+En la Figura~\ref{fig:ejemplo_error} se expone la muestra de prueba \#64 (etiqueta real 2), en la cual el Árbol predijo 6, Random Forest predijo 4, y k-NN acertó correctamente prediciendo 2. En la Figura~\ref{fig:galeria_errores} se complementa el estudio con una galería de 6 casos de prueba representativos con trazos ambiguos.
 
 \begin{figure}[H]
     \centering
@@ -341,18 +333,6 @@ En la Figura~\ref{fig:ejemplo_error} se expone la muestra de prueba correspondie
     \label{fig:ejemplo_error}
 \end{figure}
 
-Como se observa, el trazo caligráfico posee un lazo superior comprimido y una curva cerrada inferior que indujo al Árbol simple a confundir la masa inferior con el cuerpo de un 6. Random Forest, condicionado por los cortes aleatorios de píxeles, detectó trazos cruzados perpendiculares que lo llevaron a clasificarlo como 4. En contraste, k-NN calculó la vecindad global ponderada ($k=5$), reconociendo correctamente la morfología del 2.
-
-Para profundizar el análisis de fallos, en la Figura~\ref{fig:galeria_errores} se expone una galería con seis instancias de prueba complejas donde se suscitaron desacuerdos entre los modelos:
-\begin{itemize}[noitemsep]
-    \item \textbf{Muestra \#8 (Real 9):} Árbol=7, RF=9, k-NN=7. El lazo superior angosto engañó al árbol y a k-NN confundiéndolo con un 7, mientras RF acertó.
-    \item \textbf{Muestra \#23 (Real 2):} Árbol=3, RF=2, k-NN=7. Trazo ondulado complejo resuelto correctamente por RF.
-    \item \textbf{Muestra \#99 (Real 3):} Árbol=7, RF=7, k-NN=7. Los tres modelos fallaron ante un dígito 3 con trazo superior excesivamente plano y alargado que asemeja un 7.
-    \item \textbf{Muestra \#119 (Real 4):} Árbol=9, RF=9, k-NN=9. Trazo cerrado en la cúspide que visualmente emula a un 9 para todos los clasificadores.
-    \item \textbf{Muestra \#154 (Real 0):} Árbol=1, RF=5, k-NN=5. Dígito 0 deforme y fragmentado con discontinuidades que desorientaron las fronteras de decisión.
-    \item \textbf{Muestra \#171 (Real 7):} Árbol=5, RF=7, k-NN=1. Dígito 7 con barra horizontal central que indujo a k-NN a predecir 1, mientras que RF preservó la clase verdadera.
-\end{itemize}
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{images/ejemplos_mal_clasificados_grid.png}
@@ -360,7 +340,7 @@ Para profundizar el análisis de fallos, en la Figura~\ref{fig:galeria_errores} 
     \label{fig:galeria_errores}
 \end{figure}
 
-\paragraph{Respuestas a las Preguntas de Comparación:}
+\subsubsection*{2.7.6 Respuestas a las preguntas de comparación}
 \begin{enumerate}[leftmargin=*]
     \item \textbf{¿Qué modelo obtuvo la mayor exactitud y el menor error en prueba? Cuantifiquen la diferencia respecto al segundo, o indiquen si hubo empate.}
     

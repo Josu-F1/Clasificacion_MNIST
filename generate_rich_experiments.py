@@ -304,3 +304,4 @@ with open("resultados_experimento.json", "w", encoding="utf-8") as f:
     json.dump(info_json, f, indent=4, ensure_ascii=False)
 
 print("¡Experimentos ricos y gráficos generados con éxito!")
+

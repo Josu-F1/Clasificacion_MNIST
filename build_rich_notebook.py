@@ -506,3 +506,4 @@ with open(notebook_path, "w", encoding="utf-8") as f:
     nbf.write(nb_to_run, f)
 
 print(f"¡Notebook {notebook_path} ejecutado y guardado con todas las salidas exitosamente!")
+
