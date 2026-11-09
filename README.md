@@ -67,11 +67,11 @@ El objetivo de esta práctica es comparar el desempeño de tres clasificadores d
 │   └── ejemplos_mal_clasificados_grid.png             # Galería de 6 casos complejos en prueba
 ├── informe_mnist.pdf                                  # Informe formal compilado en PDF (11 páginas)
 ├── informe_mnist.tex                                  # Código fuente de LaTeX
+├── Informe_MNIST_Fiallos_Guevara.pdf                  # Copia del informe identificada con apellidos (Anexo B)
 ├── Taller_APE_MNIST_Arbol_RandomForest_kNN.ipynb      # Cuaderno Jupyter interactivo completamente ejecutado
-├── experiment.py                                      # Script reproducible del experimento completo
-├── build_rich_notebook.py                             # Script de construcción y ejecución del notebook
-├── generate_rich_experiments.py                       # Generador de gráficos de alta resolución
-├── resultados_experimento.json                        # Métricas y tiempos computacionales consolidados
+├── Taller_APE_MNIST_Fiallos_Guevara.ipynb             # Copia del cuaderno identificada con apellidos (Anexo B)
+├── Taller_APE_MNIST_Arbol_RandomForest_kNN.docx       # Guía práctica original en Word
+├── Taller_APE_MNIST_Arbol_RandomForest_kNN.pdf        # Guía práctica original en PDF
 ├── .gitignore                                         # Archivos excluidos del control de versiones
 └── README.md                                          # Documentación principal del proyecto
 ```
@@ -85,10 +85,11 @@ Para replicar el experimento localmente:
 ```bash
 git clone https://github.com/Josu-F1/Clasificacion_MNIST.git
 cd Clasificacion_MNIST
-pip install numpy pandas matplotlib seaborn scikit-learn nbformat nbclient
+pip install numpy pandas matplotlib seaborn scikit-learn
 ```
 
 ### Ejecutar el Cuaderno:
+Todo el código del experimento, modelos, métricas y generación de gráficos se encuentra autocontenido en el cuaderno interactivo de Jupyter:
 ```bash
 jupyter notebook Taller_APE_MNIST_Arbol_RandomForest_kNN.ipynb
 ```
@@ -98,4 +99,3 @@ jupyter notebook Taller_APE_MNIST_Arbol_RandomForest_kNN.ipynb
 pdflatex informe_mnist.tex
 pdflatex informe_mnist.tex
 ```
-
